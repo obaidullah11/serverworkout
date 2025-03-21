@@ -1,10 +1,14 @@
 from rest_framework import serializers
-from users.models import User
+from users.models import User,PremiumProfile
 from django.utils.encoding import smart_str, force_bytes, DjangoUnicodeDecodeError
 from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
 from users.utils import Util
 from django.shortcuts import get_object_or_404
+class PremiumProfileSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = PremiumProfile
+        fields = ['device_id', 'is_premium']  # Fields to include in the API
 
 class SocialRegistrationSerializer(serializers.ModelSerializer):
     email = serializers.EmailField(required=True)

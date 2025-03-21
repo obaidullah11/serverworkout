@@ -1,16 +1,47 @@
 from django.db import models
 from train.models import Exercise
 from django.core.exceptions import ValidationError
+import random
+
+# class Folder(models.Model):
+#     name = models.CharField(max_length=100)  # Field to store the folder name
+#     created_at = models.DateTimeField(auto_now_add=True)
+#     device_id = models.CharField(max_length=255)
+#     color = models.CharField(
+#         max_length=7
+
+#          # Default color set to '#3b5999'
+#     )
+#       # Automatically set the timestamp when created
+
+#     def __str__(self):
+#         return self.name
+
+
+
 
 class Folder(models.Model):
     name = models.CharField(max_length=100)  # Field to store the folder name
     created_at = models.DateTimeField(auto_now_add=True)
     device_id = models.CharField(max_length=255)
-      # Automatically set the timestamp when created
+    color = models.CharField(
+        max_length=7,
+        blank=True,  # Allows color to be empty initially
+        null=True     # Makes the color field nullable to allow no color set initially
+    )
 
     def __str__(self):
         return self.name
 
+    def save(self, *args, **kwargs):
+        # Only assign a random color if 'color' is not provided (it's empty or null)
+        if not self.color:
+            self.color = self.generate_random_color()
+        super(Folder, self).save(*args, **kwargs)  # Call the parent class's save method
+
+    def generate_random_color(self):
+        """Generate a random hex color code."""
+        return "#{:06x}".format(random.randint(0, 0xFFFFFF))
 
 class Workout(models.Model):
     device_id = models.CharField(max_length=255,null=True,blank=True)  # Use device_id instead of User
@@ -50,8 +81,8 @@ class WorkoutSession(models.Model):
     device_id = models.CharField(max_length=255,null=True,blank=True)  # Use device_id instead of User
     workout = models.ForeignKey(Workout, on_delete=models.CASCADE, related_name="workout_sessions")
     date = models.DateTimeField(auto_now_add=True)
-     
-    created_at = models.DateTimeField(auto_now_add=True) 
+
+    created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return f'{self.device_id} - {self.workout.name} on {self.date}'
@@ -75,7 +106,7 @@ class SetPerformance(models.Model):
             raise ValidationError("Reps must be a positive value.")
         if self.actual_kg > self.set.kg:
             raise ValidationError("Actual weight cannot exceed the set weight.")
-        
+
 # models.py
 
 
@@ -98,7 +129,7 @@ class SetHistory(models.Model):
     actual_reps = models.PositiveIntegerField()  # Actual reps performed
     created_at = models.DateTimeField(auto_now_add=True)  # Automatically set the timestamp when created
     rm = models.FloatField(null=True, blank=True)
-    pr = models.IntegerField(default=0) 
+    pr = models.IntegerField(default=0)
     def __str__(self):
         return f"Set History: {self.exercise.name} - Set {self.set_number} on {self.created_at}"
 from django.db import models

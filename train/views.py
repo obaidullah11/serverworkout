@@ -515,3 +515,51 @@ class BodyPartListView(generics.ListAPIView):
                 "message": f"An error occurred: {str(e)}",
                 "data": []
             }, status=500)
+
+
+
+
+
+
+
+
+@api_view(['GET'])
+def get_exercises_by_device_id_pagination(request, device_id=None):
+    try:
+        # Get limit and offset from the request, set default values if not provided
+        limit = int(request.query_params.get('limit', 10))  # Default limit of 10
+        offset = int(request.query_params.get('offset', 0))  # Default offset of 0 (skip)
+
+        # Fetch exercises based on device_id
+        if device_id:
+            device_specific_exercises = Exercise.objects.filter(device_id=device_id)
+            if device_specific_exercises.exists():
+                exercises = Exercise.objects.filter(Q(device_id=device_id) | Q(device_id__isnull=True))
+                message = f"Exercises for device_id {device_id} and those with no device_id."
+            else:
+                exercises = Exercise.objects.filter(device_id__isnull=True)
+                message = f"No exercises found for device_id {device_id}. Showing exercises with no device_id."
+        else:
+            exercises = Exercise.objects.filter(device_id__isnull=True)
+            message = "Showing all exercises with no device_id."
+
+        # Apply skip and limit
+        total_count = exercises.count()
+        exercises = exercises[offset:offset + limit]
+        serializer = ExerciseSerializernew(exercises, many=True)
+
+        return Response({
+            "success": True,
+            "message": message,
+            "data": serializer.data,
+            "total_count": total_count,
+            "limit": limit,
+            "offset": offset,
+        }, status=status.HTTP_200_OK)
+
+    except Exception as e:
+        return Response({
+            "success": False,
+            "message": f"An error occurred: {str(e)}",
+            "data": []
+        }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

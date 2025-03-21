@@ -20,10 +20,11 @@ urlpatterns = [
     # path('sessions/', session_list_create, name='session-list-create'),
     # path('sessions/<int:pk>/', session_detail, name='session-detail'),
     # path('user/sessions/<int:user_id>/', user_sessions, name='session-detail'),
+    path('api/exercises/v3/<str:device_id>/', get_exercises_by_device_id_pagination, name='get_exercises_by_device_id_pagination'),
 
 
     # # Setgroup URLs
-    
+
     # path('setgroups/<int:pk>/',setgroup_detail, name='setgroup-detail'),
 
     # # Set URLs

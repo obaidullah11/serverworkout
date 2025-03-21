@@ -8,7 +8,7 @@ from django.contrib.auth import authenticate
 from users.renderers import UserRenderer
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.permissions import IsAuthenticated
-from .models import User
+from .models import User,PremiumProfile
 from rest_framework.views import APIView
 from django.contrib.auth.hashers import make_password
 from rest_framework.response import Response
@@ -16,11 +16,26 @@ from rest_framework import status
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.core.mail import send_mail
 from django.utils.crypto import get_random_string
-from .serializers import SocialRegistrationSerializer, UserLoginSerializer, UserProfileSerializer,PasswordResetSerializer
+from .serializers import SocialRegistrationSerializer, UserLoginSerializer, UserProfileSerializer,PasswordResetSerializer,PremiumProfileSerializer
 from django.contrib.auth.hashers import make_password
 import random
 from rest_framework.exceptions import ValidationError
 import string
+
+class PremiumProfileAPIView(APIView):
+    def post(self, request):
+        serializer = PremiumProfileSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(
+                {"success": True, "message": "Premium profile created successfully!", "data": serializer.data},
+                status=status.HTTP_201_CREATED
+            )
+        return Response(
+            {"success": False, "errors": serializer.errors},
+            status=status.HTTP_400_BAD_REQUEST
+        )
+
 
 class SocialLoginOrRegisterView(APIView):
     def post(self, request):

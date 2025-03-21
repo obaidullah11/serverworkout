@@ -88,6 +88,7 @@ INSTALLED_APPS = [
     # 'adminsortable2',
     'users',
     'workout',
+    'knet',
     # 'interests',
     # 'Events',
     # 'factory',
@@ -96,6 +97,7 @@ INSTALLED_APPS = [
     # 'Garage',
     # 'Maintenance',
     'sslserver',
+    'token_scheduling',
 
     # 'Gym_Admin',
     # 'sortedm2m',
@@ -120,7 +122,9 @@ ROOT_URLCONF = 'Gym.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [
+            BASE_DIR / 'templates',  # Ensure this path is correct
+        ],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -132,6 +136,7 @@ TEMPLATES = [
         },
     },
 ]
+
 
 WSGI_APPLICATION = 'Gym.wsgi.application'
 
@@ -171,8 +176,11 @@ AUTH_PASSWORD_VALIDATORS = [
 # https://docs.djangoproject.com/en/4.1/topics/i18n/
 MAX_UPLOAD_SIZE = "429916160"
 LANGUAGE_CODE = 'en-us'
+# settings.py
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Asia/Karachi'  # Pakistan Standard Time (PKT)
+# USE_TZ = True  # Keep this to True to ensure Django handles timezone-aware datetime objects
+
 
 USE_I18N = True
 

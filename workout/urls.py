@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import MeasurementUpdateAPIView,MeasurementRetrieveAPIView,MeasurementCreateAPIView,get_workout_by_session,DeleteWorkoutHistoryView,ExerciseRecordsView,WorkoutHistoryByDeviceView, UpdateWorkoutView, CreateFolderView,CreateWorkoutView,FolderByDeviceIDView,get_user_workouts,UpdateWorkoutProgressView,GetSetPerformanceByUserView
+from .views import delete_workout,post_payment_result,payment_result,create_charge,ExerciseWidjetRecordsView,MeasurementUpdateAPIView,MeasurementRetrieveAPIView,MeasurementCreateAPIView,get_workout_by_session,DeleteWorkoutHistoryView,ExerciseRecordsView,WorkoutHistoryByDeviceView, UpdateWorkoutView, CreateFolderView,CreateWorkoutView,FolderByDeviceIDView,get_user_workouts,UpdateWorkoutProgressView,GetSetPerformanceByUserView
 
 urlpatterns = [
     path('measurements/update/<str:device_id>/', MeasurementUpdateAPIView.as_view(), name='measurements-update'),  # New update endpoint
@@ -16,4 +16,9 @@ urlpatterns = [
     path('exercise-records/<str:device_id>/<int:exercise_id>/', ExerciseRecordsView.as_view(), name='exercise-records'),
     path('workout-history/delete/<int:pk>/', DeleteWorkoutHistoryView.as_view(), name='delete_workout_history'),
     path('detailsession/<int:session_id>/', get_workout_by_session, name='get_workout_by_session'),
+    path('widjetrecords/<str:device_id>/', ExerciseWidjetRecordsView.as_view(), name='exercise-records'),
+    path('api/payment/', create_charge, name='make_payment'),
+    path('payment/result/', payment_result, name='payment_result'),
+    path('payment/post_result/', post_payment_result, name='post_payment_result'),
+    path('workouts/<int:pk>/delete/', delete_workout, name='delete_workout'),
 ]

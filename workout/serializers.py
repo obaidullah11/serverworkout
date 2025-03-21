@@ -8,7 +8,7 @@ from django.db.models import Max
 from django.db import models
 from train.serializers import ExerciseSerializer
 from rest_framework import serializers
- 
+
 
 # serializers.py
 from rest_framework import serializers
@@ -28,7 +28,7 @@ class FolderSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Folder
-        fields = ['id', 'name', 'device_id']  # Added device_id to the fields
+        fields = ['id', 'name', 'device_id','color']  # Added device_id to the fields
 
     def create(self, validated_data):
         # You can customize the folder creation logic as needed
@@ -36,6 +36,8 @@ class FolderSerializer(serializers.ModelSerializer):
             name=validated_data['name'], device_id=validated_data['device_id']
         )
         return folder
+
+
 class SetSerializer(serializers.ModelSerializer):
     class Meta:
         model = Set
@@ -132,17 +134,27 @@ class WorkoutSerializernew(serializers.ModelSerializer):
         representation['device_id'] = instance.device_id  # Show the device_id instead of user ID
 
         # Retrieve the associated folder
-        representation['folder'] = instance.folder.name  # Add folder name to representation
+        representation['folder'] = instance.folder.name
+        representation['color'] = instance.folder.color
+        # Add folder name to representation
 
         # Retrieve the associated WorkoutSession
         workout_session = WorkoutSession.objects.filter(workout=instance).first()
         representation['session_id'] = workout_session.id if workout_session else None  # Add session ID to representation
+
+        max_device_count = 100  # Adjust based on your data
+        max_rating = 5
 
         for exercise in representation['perform_exercises']:
             exercise_id = exercise['exercise']
             try:
                 exercise_obj = Exercise.objects.get(id=exercise_id)
                 # Now include all required fields from the Exercise model
+                device_count = workoutExercise.objects.filter(exercise_id=exercise_obj.id).values('workout__device_id').distinct().count()
+
+                # Calculate the rating
+                rating = (device_count / max_device_count) * max_rating
+                rating = min(rating, max_rating)
                 exercise['exercise'] = {
                     'id': exercise_obj.id,
                     'name': exercise_obj.name,
@@ -155,6 +167,8 @@ class WorkoutSerializernew(serializers.ModelSerializer):
                         'name': exercise_obj.category.name if exercise_obj.category else None
                     },
                     'device_id': exercise_obj.device_id,
+                    'performed_by_device_count': device_count,  # Add the count of devices that performed this exercise
+                    'rating': round(rating, 1)
                 }
             except Exercise.DoesNotExist:
                 exercise['exercise'] = 'Unknown Exercise'

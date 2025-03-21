@@ -7,6 +7,16 @@ from django.utils.crypto import get_random_string
 
 from django.contrib.auth.base_user import BaseUserManager
 
+
+class PremiumProfile(models.Model):
+    device_id = models.CharField(max_length=255, unique=True)  # Unique identifier for the device
+    is_premium = models.BooleanField(default=False)           # Premium status: True or False
+
+    def __str__(self):
+        return f"{self.device_id} - {'Premium' if self.is_premium else 'Non-Premium'}"
+
+
+
 class MyUserManager(BaseUserManager):
     def create_user(self, email,  username , password=None, **extra_fields):
         """
