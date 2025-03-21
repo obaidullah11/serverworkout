@@ -10,8 +10,8 @@ urlpatterns = [
     path('api/user/', include('users.urls')),
     path('', include('train.urls')),
     path('', include('workout.urls')),
-    path('', include('knet.urls')),
-    path('', include('token_scheduling.urls')),
+    # path('', include('knet.urls')),
+    # path('', include('token_scheduling.urls')),
     # path('', include('notifications.urls')),
 
     # Add path for WebSocket connections

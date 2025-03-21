@@ -88,7 +88,7 @@ INSTALLED_APPS = [
     # 'adminsortable2',
     'users',
     'workout',
-    'knet',
+    # 'knet',
     # 'interests',
     # 'Events',
     # 'factory',
@@ -97,7 +97,7 @@ INSTALLED_APPS = [
     # 'Garage',
     # 'Maintenance',
     'sslserver',
-    'token_scheduling',
+    # 'token_scheduling',
 
     # 'Gym_Admin',
     # 'sortedm2m',
